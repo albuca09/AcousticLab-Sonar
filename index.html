@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>AcousticLab — Painel de Processamento Sonar</title>
+<style>
+:root {--outer:#081a2d;--panel:#112a45;--panel2:#153758;--edge:#295270;--line:#366580;--text:#e6f4fe;--muted:#a3bcd0;--active:#08629d;--cyan:#31c6f3;--amber:#ffcb25;--green:#6ee7bd}
+*{box-sizing:border-box}body{margin:0;background:#07111e;color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}.app{max-width:1320px;margin:22px auto;border:5px solid #f2c71c;border-radius:10px;background:#0e2239;box-shadow:0 24px 70px #0008;overflow:hidden}.top{display:flex;align-items:center;justify-content:space-between;padding:17px 21px;background:linear-gradient(110deg,#16324f,#0b1a2d);border-bottom:1px solid #427290}.top h1{font-size:18px;letter-spacing:1px;margin:0}.top h1 b{color:#fdd84b}.top span{font-size:12px;color:#b1c7d5}.miniStatus{display:flex;align-items:center;gap:9px}.led{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px #5af2c077}.section{display:grid;grid-template-columns:155px 1fr;border-bottom:1px solid #355e78;min-height:90px}.sectionHead{background:#133451;border-right:1px solid #355e78;padding:15px;text-transform:uppercase;font-weight:800;font-size:12px;letter-spacing:1px;color:#cbddea;display:flex;flex-direction:column;gap:8px}.sectionHead .symbol{font-size:30px;line-height:1;color:#c4daef;opacity:.85}.sectionContent{padding:12px 15px;min-width:0}.row{display:flex;align-items:stretch;flex-wrap:wrap;gap:10px}.choiceGroup{display:grid;gap:5px;min-width:175px}.choose{padding:9px 12px;background:#112943;border:1px solid #3a5f7d;border-radius:4px;color:var(--text);cursor:pointer;text-align:left;display:flex;gap:15px;align-items:center;transition:.15s}.choose:hover{border-color:#7fb5df}.choose.active{background:#155b8f;border-color:#54c8fa;box-shadow:inset 3px 0 var(--amber)}.choose:disabled{opacity:.45;cursor:not-allowed}.choose strong{min-width:38px}.choose small{color:#c5d4e3;line-height:1.2}.dateArea{padding:9px 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}.dateArea label{color:var(--muted);font-size:12px}.dateArea input{width:190px}.statusInfo{margin-left:auto;color:var(--muted);font-size:12px;align-self:center}.field{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.field label{font-size:12px;color:#bfd5e8}.field input,.field select,.dateArea input{background:#091c32;color:#eaf8ff;border:1px solid #3e6482;border-radius:4px;padding:8px 10px;font:inherit;min-height:36px}.field input[type=number]{width:83px}.field select{max-width:205px}.field input[type=range]{accent-color:#1fc5f9}.action{border:1px solid #3778a0;background:#074d7c;color:#f0f9ff;border-radius:5px;padding:9px 13px;cursor:pointer;font-weight:700}.action:hover{background:#0a679e}.action.alt{background:#173651}.action.warn{border-color:#c08f3f}.action:disabled{opacity:.5;cursor:not-allowed}.tabs{display:flex;gap:9px;flex-wrap:wrap}.tile{width:165px;height:92px;border:1px solid #3d6d8a;border-radius:4px;background:#123955;cursor:pointer;color:#dff6ff;position:relative;overflow:hidden;text-transform:uppercase;font-weight:800;font-size:11px;letter-spacing:.5px;padding:7px}.tile.active{border:2px solid #72d6ff;background:#116297}.tile .decor{position:absolute;top:35px;left:28px;right:28px;height:30px;filter:drop-shadow(0 0 7px #fbbf2488)}.tile .decor.son{background:linear-gradient(90deg,transparent,#ffa41d 20%,#fff13c 50%,#ff8b18 80%,transparent);height:9px;top:53px;transform:skewY(-4deg)}.tile .decor.spec{background:linear-gradient(90deg,#ffbe1b,#ffeb7c,#f47216,transparent);clip-path:polygon(0 10%,100% 0,70% 33%,100% 50%,40% 90%,0 100%)}.tile .decor.fft{background:linear-gradient(90deg,transparent 0 10%,#ffb21f 10% 12%,transparent 12% 20%,#fff11b 20% 22%,transparent 22% 32%,#ffb21f 32% 34%,transparent 34% 44%,#fff11b 44% 47%,transparent 47% 55%,#fca31d 55% 57%,transparent 57% 67%,#fca31d 67% 70%,transparent 70% 80%,#fcca1d 80% 82%,transparent 82%);clip-path:polygon(0 42%,10% 70%,20% 15%,30% 82%,40% 38%,50% 95%,60% 2%,70% 68%,80% 28%,90% 55%,100% 30%,100% 95%,0 95%)}.config{display:flex;align-items:center;gap:17px;flex-wrap:wrap}.config .info{font-size:12px;color:var(--muted)}.advanced{display:grid;grid-template-columns:repeat(3,minmax(180px,1fr));gap:12px 18px}.advanced .field{justify-content:space-between}.advanced select{max-width:180px;min-width:100px}.advanced .field input{max-width:160px}.graphwrap{padding:13px 17px 17px;background:#07192b;border-bottom:1px solid #386787}.graphhead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px}.graphhead h2{font-size:14px;letter-spacing:1px;text-transform:uppercase;margin:0}.graphhead .meta{color:#aac4d7;font-size:12px}.grapharea{border:1px solid #326587;background:#061629;border-radius:5px;overflow:hidden;position:relative}.grapharea canvas{display:block;width:100%;height:390px}.graphlegend{display:flex;flex-wrap:wrap;gap:12px;font-size:11px;color:#bed5e4;margin:8px 0 0}.graphlegend strong{color:#fbd24e}.bottom{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#113352;flex-wrap:wrap}.tag{background:#09679d;font-size:11px;font-weight:700;color:#e4f7ff;padding:6px 9px;border-radius:3px}.bottom .bottomStatus{margin-left:auto;color:#b8d1e2;font-size:12px}.help{padding:12px 18px 17px;color:#c7d5df;font-size:12px;line-height:1.6}.help b{color:#ffda59}#message{padding:9px 12px;background:#102d47;border:1px solid #416987;border-radius:4px;min-height:40px;margin-top:10px;color:#cae5ef;font-size:12px}input[type=file]{display:none}.fileLabel{border:1px solid #3778a0;background:#173651;color:#f0f9ff;border-radius:5px;padding:9px 13px;cursor:pointer;font-weight:700}.fileLabel:hover{background:#1b5079}.smallNotes{color:#a7bfce;font-size:11px}code{color:#f6d975}a{color:#a2ddff}@media(max-width:850px){.section{grid-template-columns:100px 1fr}.sectionHead{padding:12px 7px}.advanced{grid-template-columns:1fr 1fr}.tile{width:135px}.grapharea canvas{height:300px}.dateArea{padding:8px 0}}@media(max-width:580px){.section{grid-template-columns:1fr}.sectionHead{flex-direction:row;align-items:center;border-bottom:1px solid #3a617e}.sectionHead .symbol{font-size:21px}.advanced{grid-template-columns:1fr}.tile{width:31%;min-width:100px}.grapharea canvas{height:260px}.statusInfo{margin-left:0}.top h1{font-size:15px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top"><div><h1><b>ACOUSTIC</b>LAB <span style="color:#e7f6ff">/ NEW PROCESS</span></h1><span>Painel demonstrativo inspirado na referência visual • reprodução independente</span></div><div class="miniStatus"><i class="led"></i><span id="sourceState">Fonte: sinal sintético</span></div></header>
+<section class="section"><div class="sectionHead">Mode <span class="symbol">⌛</span></div><div class="sectionContent"><div class="row"><div class="choiceGroup" id="modes"><button type="button" class="choose" data-mode="RT"><strong>RT</strong><small>Real Time</small></button><button type="button" class="choose active" data-mode="DT"><strong>DT</strong><small>Delayed Time</small></button><button type="button" class="choose" data-mode="CT"><strong>CT</strong><small>Continuous Time</small></button></div><div class="dateArea"><div><label for="t1">T1 — Início (s)</label><div><input id="t1" type="number" min="0" step="0.1" value="0"/></div></div><div><label for="t2">T2 — Fim (s)</label><div><input id="t2" type="number" min="0.1" step="0.1" value="6"/></div></div><div style="display:grid;gap:7px"><label class="fileLabel" for="file">Abrir arquivo de áudio</label><input id="file" type="file" accept=".wav,.mp3,.flac,.ogg,audio/*"/><button type="button" class="action alt" id="sampleBtn">Gerar sinal demonstrativo</button></div></div><div class="statusInfo">T1/T2 em segundos do arquivo<br/>RT: entrada por microfone*</div></div></div></section>
+<section class="section"><div class="sectionHead">Process <span class="symbol">⌁</span></div><div class="sectionContent"><div class="row"><div class="choiceGroup" id="method"><button class="choose active" data-method="FFT"><strong>FFT</strong><small>Fourier / STFT</small></button><button class="choose" data-method="WGN"><strong>WGN</strong><small>Wigner–Ville*</small></button><button class="choose" data-method="NO"><strong>N/O</strong><small>Nth Octave*</small></button><button class="choose" data-method="SHM"><strong>SHM</strong><small>Não identificado*</small></button></div><div class="choiceGroup" id="process"><button class="choose active" data-process="BB"><strong>BB</strong><small>Baseband / FFT</small></button><button class="choose" data-process="ZOOM"><strong>Z+</strong><small>Vernier / Zoom</small></button><button class="choose" data-process="DE"><strong>DE</strong><small>DEMON</small></button></div><div style="display:grid;gap:10px;padding:10px 9px;align-content:start"><div class="field"><label for="decim">Fator de decimação</label><select id="decim"><option value="1">1</option><option value="2">2</option><option value="4">4</option><option value="5" selected>5</option><option value="8">8</option></select></div><div class="field"><label for="fLow">Banda DEMON (Hz)</label><input id="fLow" type="number" value="700" min="0" step="50" style="width:80px"/><span>–</span><input id="fHigh" type="number" value="1100" min="1" step="50" style="width:80px"/></div><div class="field"><label for="fMin">Zoom min./max. (Hz)</label><input id="fMin" type="number" value="100" min="0" step="20" style="width:80px"/><span>–</span><input id="fMax" type="number" value="700" min="1" step="20" style="width:80px"/></div></div></div></div></section>
+<section class="section"><div class="sectionHead">Display <span class="symbol">▰</span></div><div class="sectionContent"><div class="tabs" id="views"><button class="tile" data-view="SON"><span>Sonogram</span><i class="decor son"></i></button><button class="tile active" data-view="SPEC"><span>Spectrogram</span><i class="decor spec"></i></button><button class="tile" data-view="SPECTRUM"><span>Spectrum</span><i class="decor fft"></i></button></div></div></section>
+<section class="section"><div class="sectionHead">Parameters <span class="symbol">⚒</span></div><div class="sectionContent"><div class="config"><div class="field"><label for="line">Número da linha</label><select id="line"><option value="1">1 — Mono / canal 1</option><option value="2">2 — Canal 2</option></select></div><div class="field"><label for="fftSize">Janela FFT (amostras)</label><select id="fftSize"><option>512</option><option>1024</option><option selected>2048</option><option>4096</option><option>8192</option></select></div><div class="field"><label for="overlap">Sobreposição (%)</label><select id="overlap"><option>50</option><option selected>75</option><option>87.5</option></select></div><div class="info">Resolução depende de FFT, janela e taxa efetiva.</div></div></div></section>
+<section class="section"><div class="sectionHead">Advanced <span class="symbol">✓</span></div><div class="sectionContent"><div class="advanced"><div class="field"><label for="rate">Rate (visualizações/s)</label><input id="rate" type="number" value="1" min="1" max="30"/></div><div class="field"><label for="integrMode">Integration</label><select id="integrMode"><option value="LINEAR">1 — Linear</option><option value="EXP">2 — Exponencial</option></select></div><div class="field"><label for="normal">Normalization</label><select id="normal"><option value="NONE">No norm</option><option value="PEAK">Peak (0 dB)</option><option value="FRAME">Por janela</option></select></div><div class="field"><label for="recovery">Recovering ratio</label><input id="recovery" value="100% (dados completos)" readonly style="min-width:170px;color:#75dfbd"/></div><div class="field"><label for="integrN">Integration N</label><input id="integrN" type="number" value="1" min="1" max="50"/></div><div class="field"><label for="window">Window</label><select id="window"><option value="HANN">1 — Hanning (Hann)</option><option value="HAMMING">2 — Hamming</option><option value="RECT">3 — Retangular</option></select></div></div></div></section>
+<div class="graphwrap"><div class="graphhead"><h2 id="plotTitle">Espectrograma — FFT / Banda-base</h2><span class="meta" id="plotMeta">Fonte sintética · 15.000 amostras/s</span></div><div class="grapharea"><canvas id="plot" width="1100" height="460" aria-label="Visualização acústica"></canvas></div><div class="graphlegend"><span><strong>Horizontal:</strong> tempo ou frequência</span><span><strong>Vertical:</strong> frequência ou nível relativo</span><span><strong>Cores:</strong> energia espectral relativa (dB)</span></div><div id="message" role="status">Pronto. O sinal de teste combina ruído modulado, componentes tonais e uma componente de frequência variável. Experimente DEMON, FFT, zoom e diferentes modos de visualização.</div></div>
+<footer class="bottom"><button class="action" id="processBtn">▶ Processar</button><button class="action alt" id="saveBtn">⬇ Salvar gráfico PNG</button><span class="tag" id="modeTag">DT</span><span class="tag" id="processTag">FFT · BB</span><span class="tag" id="sampleTag">15.000 Hz</span><span class="tag" id="decTag">D=5</span><span class="bottomStatus" id="runtime">Status: pronto</span></footer>
+<div class="help"><b>Nota técnica:</b> este é um protótipo independente, não uma reprodução do algoritmo proprietário original. FFT/STFT, fator de decimação com filtragem FIR antialiasing e DEMON por envoltória analítica estão funcionais. WGN, N/O e SHM são controles de arquitetura demonstrativos e não executam algoritmos nesta versão. O sonograma usa um contraste tipo waterfall, sem afirmar correspondência metrológica com a interface de referência. Níveis são <b>relativos</b>, não dB re 1 µPa. *O microfone depende das permissões de segurança do navegador.</div>
+</div>
+<script>
+'use strict';
+const $ = id=>document.getElementById(id);
+const app={mode:'DT',method:'FFT',proc:'BB',view:'SPEC',raw:null,channels:[],fs:15000,source:'sintético',displayFrames:null,lastDetails:'',selectedChannel:0,mic:null,micStream:null,micCtx:null,micArray:[],busy:false,liveTimer:null};
+const clamp=(v,a,b)=>Math.min(Math.max(v,a),b);
+const fmt=(v,p=1)=>Number(v).toLocaleString('pt-BR',{maximumFractionDigits:p});
+const nextPow2=n=>{let k=1;while(k<n)k*=2;return k;};
+function message(m){$('message').textContent=m;}
+function setStatus(m){$('runtime').textContent=m;}
+function syncChoice(parent,attr,value){for(const el of $(parent).querySelectorAll('[data-'+attr+']'))el.classList.toggle('active',el.dataset[attr]===value);}
+function generateDemo(){
+ const fs=15000,duration=6,length=fs*duration,x=new Float32Array(length);let seed=17;
+ const rand=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};
+ for(let i=0;i<length;i++){
+  const t=i/fs;const am=0.78+0.34*Math.cos(2*Math.PI*9*t)+0.22*Math.cos(2*Math.PI*27*t);
+  const wn=(rand()+rand()+rand()+rand()-2)/2;
+  const mod=am*(0.24*Math.sin(2*Math.PI*820*t)+0.18*Math.sin(2*Math.PI*940*t)+0.10*wn);
+  const tone=0.20*Math.sin(2*Math.PI*240*t)+0.12*Math.sin(2*Math.PI*480*t);
+  const chirp=0.10*Math.sin(2*Math.PI*(350*t+12*t*t));
+  x[i]=clamp(mod+tone+chirp,-1,1);
+ }
+ app.raw=x;app.channels=[x];app.fs=fs;app.source='sinal sintético';$('t1').value=0;$('t2').value=duration;$('line').value=1;$('sourceState').textContent='Fonte: sinal sintético';message('Sinal demonstrativo carregado: 6 s, 15.000 Hz, linhas tonais (240 e 480 Hz), chirp e componentes de alta frequência moduladas a 9 e 27 Hz. Não representa dados operacionais reais.');render();
+}
+// FFT radix-2, in-place (complexa; inversa normalizada).
+function fft(r,im,inverse=false){
+ const n=r.length;for(let i=1,j=0;i<n;i++){let bit=n>>1;for(;j&bit;bit>>=1)j^=bit;j^=bit;if(i<j){[r[i],r[j]]=[r[j],r[i]];[im[i],im[j]]=[im[j],im[i]];}}
+ for(let len=2;len<=n;len<<=1){let ang=(inverse?2:-2)*Math.PI/len,wr0=Math.cos(ang),wi0=Math.sin(ang);for(let k=0;k<n;k+=len){let wr=1,wi=0;for(let j=0;j<len/2;j++){let u=k+j,v=u+len/2,tr=r[v]*wr-im[v]*wi,ti=r[v]*wi+im[v]*wr;r[v]=r[u]-tr;im[v]=im[u]-ti;r[u]+=tr;im[u]+=ti;let rr=wr*wr0-wi*wi0;wi=wr*wi0+wi*wr0;wr=rr;}}}
+ if(inverse)for(let i=0;i<n;i++){r[i]/=n;im[i]/=n;}
+}
+function lowPassDecimate(x,q,fs){
+ if(q===1)return x;
+ // FIR sinc com janela de Hamming; corte a 80% do Nyquist da nova taxa.
+ const taps=16*q+1,mid=(taps-1)/2,fc=.40/q,h=new Float64Array(taps);let sum=0;
+ for(let j=0;j<taps;j++){let z=j-mid,sinc=Math.abs(z)<1e-12?2*fc:Math.sin(2*Math.PI*fc*z)/(Math.PI*z);h[j]=sinc*(.54-.46*Math.cos(2*Math.PI*j/(taps-1)));sum+=h[j];}
+ for(let j=0;j<taps;j++)h[j]/=sum;
+ const y=new Float32Array(Math.floor((x.length-1)/q)+1);
+ for(let n=0;n<y.length;n++){const center=n*q;let val=0;for(let j=0;j<taps;j++){const idx=center+j-mid;if(idx>=0&&idx<x.length)val+=x[idx]*h[j];}y[n]=val;}
+ return y;
+}
+function getWindow(n){const a=new Float64Array(n),type=$('window').value;for(let i=0;i<n;i++){const t=2*Math.PI*i/(n-1);a[i]=type==='HANN'?.5-.5*Math.cos(t):type==='HAMMING'?.54-.46*Math.cos(t):1;}return a;}
+function getEnvelope(signal,fs){
+ let fLo=Math.max(0,Number($('fLow').value)||0),fHi=Math.min(fs*.49,Number($('fHigh').value)||0);
+ if(fHi<=fLo+5)throw Error('A banda DEMON precisa de limite superior maior que o inferior e abaixo de Nyquist.');
+ const n=nextPow2(signal.length),r=new Float64Array(n),im=new Float64Array(n);for(let j=0;j<signal.length;j++)r[j]=signal[j];fft(r,im);
+ for(let k=0;k<n;k++){const f=Math.min(k,n-k)*fs/n;
+   const scale=(f>=fLo&&f<=fHi)?((k>0&&k<n/2)?2:((k===0||k===n/2)?1:0)):0;r[k]*=scale;im[k]*=scale;
+ }
+ fft(r,im,true);const env=new Float32Array(signal.length);let avg=0;
+ for(let i=0;i<env.length;i++){env[i]=Math.hypot(r[i],im[i]);avg+=env[i];}avg/=env.length;
+ for(let i=0;i<env.length;i++)env[i]-=avg;
+ return env;
+}
+function computeSTFT(signal,fs,isDemon){
+ let winSize=Math.round(Number($('fftSize').value));winSize=clamp(winSize,256,8192);
+ if(isDemon)winSize=Math.max(2048,winSize);
+ if(signal.length<winSize)throw Error('Intervalo muito curto para o tamanho de FFT escolhido.');
+ const overlap=Number($('overlap').value)/100,hop=Math.max(1,Math.round(winSize*(1-overlap))),frameCount=1+Math.floor((signal.length-winSize)/hop),maxFrames=180,stride=Math.max(1,Math.ceil(frameCount/maxFrames));
+ const win=getWindow(winSize),re=new Float64Array(winSize),im=new Float64Array(winSize),frames=[];let times=[];
+ for(let frame=0;frame<frameCount;frame+=stride){const start=frame*hop;for(let i=0;i<winSize;i++){re[i]=signal[start+i]*win[i];im[i]=0;}fft(re,im);
+  const mags=new Float32Array(winSize/2+1);for(let k=0;k<mags.length;k++){mags[k]=10*Math.log10((re[k]*re[k]+im[k]*im[k])/(winSize*winSize)+1e-14);}frames.push(mags);times.push((start+winSize/2)/fs);
+ }
+ return {frames,times,df:fs/winSize,fs,nfft:winSize,duration:signal.length/fs};
+}
+function smoothIntegration(frames){const n=clamp(parseInt($('integrN').value)||1,1,50),mode=$('integrMode').value;if(n===1)return frames;
+ const smoothed=[];const L=frames[0].length;
+ if(mode==='EXP'){let previous=null;const alpha=2/(n+1);for(const fr of frames){const out=new Float32Array(L);for(let k=0;k<L;k++){const power=Math.pow(10,fr[k]/10);let v=(previous?previous[k]*(1-alpha):0)+alpha*power;out[k]=v;}previous=out;smoothed.push(Float32Array.from(out,v=>10*Math.log10(v+1e-14)));}}
+ else for(let i=0;i<frames.length;i++){const out=new Float32Array(L);for(let k=0;k<L;k++){let s=0;for(let j=Math.max(0,i-n+1);j<=i;j++)s+=Math.pow(10,frames[j][k]/10);out[k]=10*Math.log10(s/Math.min(i+1,n)+1e-14);}smoothed.push(out);}
+ return smoothed;
+}
+function selectRegion(){if(!app.raw)throw Error('Nenhuma entrada carregada');let channel=Number($('line').value)-1;if(channel>=app.channels.length){channel=0;$('line').value='1';}
+ let x=app.channels[channel],fs=app.fs,duration=x.length/fs,a=clamp(Number($('t1').value)||0,0,Math.max(0,duration-.05)),b=clamp(Number($('t2').value)||duration,a+.05,duration);
+ if(b-a<.3)throw Error('Selecione pelo menos 0,3 s no intervalo T1–T2.');
+ const maxSeconds=12;if(b-a>maxSeconds){b=a+maxSeconds;message('A demonstração limita o processamento a 12 s por execução. A implementação Python pode processar registros completos por blocos.');}
+ return {x:x.subarray(Math.floor(a*fs),Math.floor(b*fs)),fs,a,b};
+}
+function normalizeFrames(frames){let mode=$('normal').value;if(mode==='NONE')return frames;
+ const peaks=frames.map(fr=>Math.max(...fr));const maximum=Math.max(...peaks);
+ return frames.map((fr,i)=>Float32Array.from(fr,v=>v-(mode==='FRAME'?peaks[i]:maximum)));
+}
+function mapColor(v,waterfall){const t=clamp(v,0,1);let stops=waterfall?[[4,17,37],[4,45,78],[22,117,174],[233,121,21],[255,236,61]]:[[4,19,41],[6,40,88],[32,109,155],[224,78,25],[255,224,42]];let f=t*(stops.length-1),idx=Math.min(stops.length-2,Math.floor(f)),w=f-idx;return `rgb(${stops[idx].map((x,j)=>Math.round(x*(1-w)+stops[idx+1][j]*w)).join(',')})`;
+}
+function axes(ctx,cw,ch,xlabel,ylabel){const g={l:65,t:28,r:cw-34,b:ch-45};ctx.fillStyle='#061629';ctx.fillRect(0,0,cw,ch);ctx.strokeStyle='#3a6680';ctx.lineWidth=1;ctx.strokeRect(g.l,g.t,g.r-g.l,g.b-g.t);ctx.fillStyle='#bed6e4';ctx.font='13px system-ui';ctx.textAlign='center';ctx.fillText(xlabel,(g.l+g.r)/2,ch-12);ctx.save();ctx.translate(18,(g.t+g.b)/2);ctx.rotate(-Math.PI/2);ctx.fillText(ylabel,0,0);ctx.restore();return g;}
+function drawPlot(data,fs,isDemon){
+ const c=$('plot'),ctx=c.getContext('2d'),W=c.width,H=c.height,view=app.view,frames=data.frames;const label=isDemon?'Frequência de modulação (Hz)':'Frequência (Hz)';let fMin=0,fMax=isDemon?Math.min(100,fs/2):fs/2;
+ if(app.proc==='ZOOM'&&!isDemon){fMin=clamp(Number($('fMin').value)||0,0,fs/2);fMax=clamp(Number($('fMax').value)||fs/2,fMin+1,fs/2);}
+ const lo=clamp(Math.round(fMin/data.df),0,frames[0].length-1),hi=clamp(Math.round(fMax/data.df),lo+1,frames[0].length-1);
+ if(hi<=lo)throw Error('Faixa espectral vazia. Ajuste o zoom.');
+ const g=axes(ctx,W,H,view==='SPECTRUM'?label:'Tempo relativo (s)',view==='SPECTRUM'?'Potência relativa (dB)':label),graphW=g.r-g.l,graphH=g.b-g.t;
+ ctx.strokeStyle='#2d4c62';ctx.fillStyle='#a9c8d6';ctx.font='11px system-ui';
+ for(let k=0;k<=5;k++){let y=g.b-k*graphH/5;ctx.beginPath();ctx.moveTo(g.l,y);ctx.lineTo(g.r,y);ctx.stroke();ctx.textAlign='right';ctx.fillText(view==='SPECTRUM'?'':fmt(fMin+(fMax-fMin)*k/5,0),g.l-9,y+4);}
+ for(let k=0;k<=8;k++){let x=g.l+k*graphW/8;ctx.beginPath();ctx.moveTo(x,g.t);ctx.lineTo(x,g.b);ctx.stroke();ctx.textAlign='center';ctx.fillText(view==='SPECTRUM'?fmt(fMin+(fMax-fMin)*k/8,0):fmt(data.times[0]+(data.times[data.times.length-1]-data.times[0])*k/8,1),x,g.b+16);}
+ if(view==='SPECTRUM'){
+  const n=frames.length,m=hi-lo+1,avg=new Float32Array(m);for(let k=lo;k<=hi;k++){let power=0;for(let i=0;i<n;i++)power+=Math.pow(10,frames[i][k]/10);avg[k-lo]=10*Math.log10(power/n+1e-14);}
+  const minDb=Math.floor((Math.min(...avg)-8)/10)*10,maxDb=Math.ceil((Math.max(...avg)+6)/10)*10,range=Math.max(1,maxDb-minDb);
+  ctx.fillStyle='#c1d9e4';ctx.textAlign='right';for(let k=0;k<=5;k++)ctx.fillText(fmt(minDb+range*k/5,0),g.l-8,g.b-k*graphH/5+3);
+  let grd=ctx.createLinearGradient(0,g.t,0,g.b);grd.addColorStop(0,'#f7da44');grd.addColorStop(.6,'#ed8d21');grd.addColorStop(1,'#24b9ef');ctx.strokeStyle=grd;ctx.lineWidth=1.65;ctx.beginPath();for(let k=0;k<m;k++){const px=g.l+k/(m-1)*graphW,py=g.b-(avg[k]-minDb)/range*graphH;if(k===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);}ctx.stroke();
+ } else {
+  let maxDb=-Infinity;let minDb=Infinity;for(const fr of frames)for(let k=lo;k<=hi;k++){maxDb=Math.max(maxDb,fr[k]);minDb=Math.min(minDb,fr[k]);}
+  const rangeDb=$('normal').value==='NONE'?65:55;const top=maxDb+1,bottom=Math.max(minDb,top-rangeDb);
+  const n=frames.length,m=hi-lo+1;
+  const frameW=graphW/n+0.25,binH=graphH/m+0.3;
+  for(let i=0;i<n;i++)for(let k=lo;k<=hi;k++){let v=clamp((frames[i][k]-bottom)/(top-bottom+1e-9),0,1);if(view==='SON'){v=Math.pow(v,1.9);}
+   ctx.fillStyle=mapColor(v,view==='SON');ctx.fillRect(g.l+i*graphW/n,g.b-(k-lo+1)*graphH/m,frameW,binH);
+  }
+ }
+ ctx.strokeStyle='#75a9c5';ctx.strokeRect(g.l,g.t,graphW,graphH);
+}
+function render(){
+ if(app.busy)return;app.busy=true;setStatus('Processando…');
+ try{
+  if(app.method!=='FFT')throw Error('O algoritmo '+app.method+' está reservado para versão posterior e NÃO foi implementado nesta demonstração.');
+  const region=selectRegion(),q=Number($('decim').value),fs=region.fs/q,x=lowPassDecimate(region.x,q,region.fs);
+  let isDemon=app.proc==='DE',sig=isDemon?getEnvelope(x,fs):x;
+  let stft=computeSTFT(sig,fs,isDemon);stft.frames=normalizeFrames(smoothIntegration(stft.frames));
+  drawPlot(stft,fs,isDemon);
+  let title=app.view==='SPECTRUM'?'Espectro':app.view==='SON'?'Sonograma':'Espectrograma';
+  $('plotTitle').textContent=title+' — '+(isDemon?'DEMON':app.proc==='ZOOM'?'FFT / Vernier':'FFT / Banda-base');
+  $('plotMeta').textContent=`${app.source} · entrada ${fmt(region.fs,0)} Hz · após decimação ${fmt(fs,0)} Hz · ${fmt(region.b-region.a,1)} s · Δf ≈ ${fmt(stft.df,2)} Hz`;
+  $('processTag').textContent=app.method+' · '+app.proc;$('sampleTag').textContent=fmt(region.fs,0)+' Hz';$('decTag').textContent='D='+q;
+  $('modeTag').textContent=app.mode;$('recovery').value='100% (sem perda simulada)';
+  setStatus('Status: atualizado');
+  app.lastDetails={fs,rawfs:region.fs,duration:region.b-region.a,nfft:stft.nfft,df:stft.df,frames:stft.frames.length};
+ }catch(err){message('Atenção: '+err.message);setStatus('Status: corrigir parâmetros');}
+ finally{app.busy=false;}
+}
+function modeChange(mode){if(app.mode===mode)return;app.mode=mode;syncChoice('modes','mode',mode);$('modeTag').textContent=mode;if(mode==='RT'){startMicrophone();}else if(mode==='CT'){stopMic();message('CT: processamento contínuo demonstrativo — o gráfico é recalculado enquanto o modo estiver selecionado.');startAuto();}else{stopMic();stopAuto();message('DT: selecione um arquivo local, ou utilize o sinal sintético e ajuste T1/T2.');}}
+function stopAuto(){if(app.liveTimer){clearInterval(app.liveTimer);app.liveTimer=null;}}
+function startAuto(){stopAuto();const ms=1000/clamp(parseInt($('rate').value)||1,1,30);app.liveTimer=setInterval(()=>{if(app.mode==='CT')render();},ms);render();}
+function stopMic(){if(app.mic){app.mic.disconnect();app.mic=null;}if(app.micStream){for(const track of app.micStream.getTracks())track.stop();app.micStream=null;}if(app.micCtx){app.micCtx.close();app.micCtx=null;}stopAuto();}
+async function startMicrophone(){stopMic();stopAuto();if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){message('RT indisponível neste contexto: use HTTPS/localhost com permissão do microfone, ou utilize DT.');return;}
+ try{const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});if(app.mode!=='RT'){stream.getTracks().forEach(t=>t.stop());return;}
+ const ac=new AudioContext(),src=ac.createMediaStreamSource(stream),an=ac.createAnalyser();an.fftSize=4096;src.connect(an);app.micCtx=ac;app.mic=src;app.micStream=stream;let ring=new Float32Array(ac.sampleRate*6|0),written=0,buf=new Float32Array(an.fftSize);
+ message('RT: microfone ativo. Atenção: aquisição via AnalyserNode é demonstrativa e pode perder/duplicar amostras; aquisição científica exige AudioWorklet e buffers com carimbo temporal.');
+ const tick=()=>{if(app.mode!=='RT')return;an.getFloatTimeDomainData(buf);const increment=Math.max(1,Math.floor(ac.sampleRate/clamp(parseInt($('rate').value)||1,1,15)));const n=Math.min(buf.length,increment);for(let i=buf.length-n;i<buf.length;i++){ring[written%ring.length]=buf[i];written++;}
+ const m=Math.min(written,ring.length),x=new Float32Array(m);for(let j=0;j<m;j++)x[j]=ring[(written-m+j)%ring.length];app.channels=[x];app.raw=x;app.fs=ac.sampleRate;app.source='microfone (demonstração)';$('t1').value=0;$('t2').value=(x.length/ac.sampleRate).toFixed(2);$('sourceState').textContent='Fonte: microfone';if(x.length>8192)render();};
+ app.liveTimer=setInterval(tick,1000/clamp(parseInt($('rate').value)||1,1,15));
+ }catch(e){message('Não foi possível iniciar o microfone: '+e.message+'. O modo DT com arquivos continua disponível.');}
+}
+// Leitura PCM WAV preserva a taxa original (WebAudio costuma reamostrar ao decodificar).
+function parsePcmWav(bytes){
+ const dv=new DataView(bytes),n=dv.byteLength;
+ if(n<44||dv.getUint32(0,false)!==0x52494646||dv.getUint32(8,false)!==0x57415645)return null;
+ let pos=12,fmt=null,offset=-1,length=0;
+ const tag=p=>String.fromCharCode(dv.getUint8(p),dv.getUint8(p+1),dv.getUint8(p+2),dv.getUint8(p+3));
+ while(pos+8<=n){let type=tag(pos),size=dv.getUint32(pos+4,true),head=pos+8;if(size>n-head)throw Error('WAV truncado ou segmento inválido.');
+  if(type==='fmt '){if(size<16)throw Error('Cabeçalho fmt WAV inválido.');fmt={kind:dv.getUint16(head,true),count:dv.getUint16(head+2,true),fs:dv.getUint32(head+4,true),align:dv.getUint16(head+12,true),bits:dv.getUint16(head+14,true)};
+   if(fmt.kind===65534&&size>=40)fmt.kind=dv.getUint16(head+24,true);}
+  if(type==='data'&&offset<0){offset=head;length=size;}
+  pos=head+size+(size%2);
+ }
+ if(!fmt||offset<0)return null;
+ const kind=fmt.kind,bits=fmt.bits,channels=fmt.count,bytesPerSample=bits/8;
+ if(!(kind===1||kind===3)||!Number.isInteger(bytesPerSample)||bytesPerSample<1||bytesPerSample>8)return null;
+ if(![8,16,24,32,64].includes(bits)||!channels||channels>32||!fmt.fs||fmt.align<channels*bytesPerSample)throw Error('Formato PCM WAV inválido.');
+ const numFrames=Math.floor(length/fmt.align),data=Array.from({length:Math.min(2,channels)},()=>new Float32Array(numFrames));
+ for(let i=0;i<numFrames;i++)for(let c=0;c<data.length;c++){
+  const q=offset+i*fmt.align+c*bytesPerSample;let v=0;
+  if(kind===3){if(bits===32)v=dv.getFloat32(q,true);else if(bits===64)v=dv.getFloat64(q,true);else return null;}
+  else if(bits===8)v=(dv.getUint8(q)-128)/128;
+  else if(bits===16)v=dv.getInt16(q,true)/32768;
+  else if(bits===24){let z=dv.getUint8(q)|(dv.getUint8(q+1)<<8)|(dv.getUint8(q+2)<<16);if(z&0x800000)z-=0x1000000;v=z/8388608;}
+  else if(bits===32)v=dv.getInt32(q,true)/2147483648;
+  else return null;
+  data[c][i]=Number.isFinite(v)?v:0;
+ }
+ return {channels:data,sampleRate:fmt.fs,duration:numFrames/fmt.fs,numberOfChannels:channels,preserved:true};
+}
+async function handleFile(file){if(!file)return;
+ try{const bytes=await file.arrayBuffer();let audio=parsePcmWav(bytes),ctx=null;
+  if(!audio){ctx=new (window.AudioContext||window.webkitAudioContext)();const decoded=await ctx.decodeAudioData(bytes);audio={channels:Array.from({length:Math.min(decoded.numberOfChannels,2)},(_,c)=>decoded.getChannelData(c).slice()),sampleRate:decoded.sampleRate,duration:decoded.duration,numberOfChannels:decoded.numberOfChannels,preserved:false};}
+  app.fs=audio.sampleRate;app.channels=audio.channels;app.raw=app.channels[0];app.source=file.name;
+  $('sourceState').textContent='Fonte: '+file.name;
+  $('line').innerHTML=app.channels.map((_,i)=>`<option value="${i+1}">${i+1} — Canal ${i+1}</option>`).join('');
+  $('t1').value=0;$('t2').value=Math.min(12,audio.duration).toFixed(2);
+  if(app.mode!=='DT')modeChange('DT');
+  message(`Arquivo carregado: ${file.name}. Duração: ${fmt(audio.duration,2)} s, taxa: ${fmt(audio.sampleRate,0)} Hz, canais: ${audio.numberOfChannels}. ${audio.preserved?'PCM WAV: taxa e amostras originais preservadas.':'O navegador pode ter reamostrado o áudio durante a decodificação.'} Processamento demonstrativo de até 12 s por vez.`);
+  render();if(ctx)await ctx.close();
+ }catch(e){message('Falha na leitura do áudio: '+e.message+'. Verifique formato e integridade do arquivo.');}
+}
+$('file').addEventListener('change',e=>handleFile(e.target.files[0]));$('sampleBtn').addEventListener('click',()=>{if(app.mode!=='DT')modeChange('DT');generateDemo();});
+$('modes').addEventListener('click',e=>{const b=e.target.closest('button[data-mode]');if(b)modeChange(b.dataset.mode);});
+$('method').addEventListener('click',e=>{const b=e.target.closest('button[data-method]');if(!b)return;if(b.dataset.method!=='FFT'){message('A opção '+b.textContent.trim()+' foi reproduzida visualmente, mas o algoritmo ainda não está implementado. O processamento FFT permanece ativo.');return;}app.method='FFT';syncChoice('method','method','FFT');render();});
+$('process').addEventListener('click',e=>{const b=e.target.closest('button[data-process]');if(!b)return;app.proc=b.dataset.process;syncChoice('process','process',app.proc);render();if(app.proc==='DE')message('DEMON: filtragem de banda em frequência, sinal analítico, extração da envoltória e STFT do envelope. Frequências são de MODULAÇÃO, não frequências acústicas portadoras.');});
+$('views').addEventListener('click',e=>{const b=e.target.closest('button[data-view]');if(!b)return;app.view=b.dataset.view;syncChoice('views','view',app.view);render();});
+for(const id of ['t1','t2','line','fftSize','overlap','decim','fLow','fHigh','fMin','fMax','window','integrMode','integrN','normal'])$(id).addEventListener('change',render);
+$('rate').addEventListener('change',()=>{if(app.mode==='CT')startAuto();else if(app.mode==='RT')message('A mudança da taxa em RT requer reiniciar o modo RT.');});
+$('processBtn').addEventListener('click',render);
+$('saveBtn').addEventListener('click',()=>{const a=document.createElement('a');a.href=$('plot').toDataURL('image/png');a.download='acousticlab_'+app.proc+'_'+app.view+'.png';a.click();message('O gráfico exibido foi exportado para PNG. Os dados brutos não foram modificados.');});
+window.addEventListener('beforeunload',stopMic);
+generateDemo();
+</script>
+</body>
+</html>
