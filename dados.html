@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AcousticLab — Banco de Dados Acústicos</title>
+<style>
+:root{--bg:#07111e;--panel:#112a45;--panel2:#153758;--edge:#355e78;--txt:#e6f4fe;--muted:#b0c6d6;--accent:#38c9ed;--yellow:#ffcb25}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font:14px/1.5 system-ui,Arial,sans-serif;color:var(--txt)}
+.shell{max-width:1350px;margin:20px auto;border:4px solid #e7c128;border-radius:11px;background:#0e2239;overflow:hidden;box-shadow:0 22px 70px #0007}
+header{padding:22px;background:linear-gradient(110deg,#16324f,#0b1a2d)}h1{margin:0;font-size:23px;letter-spacing:.6px}h1 b{color:var(--yellow)}.sub{color:var(--muted);font-size:13px}
+nav{display:flex;gap:8px;flex-wrap:wrap;padding:12px 20px;border-top:1px solid var(--edge);border-bottom:1px solid var(--edge);background:#102a43}
+nav a{border:1px solid #326486;border-radius:5px;padding:9px 14px;color:var(--txt);text-decoration:none;font-weight:700}
+nav a.active{background:#0c6da2;border-color:#73d7f2}
+section{padding:22px;border-bottom:1px solid var(--edge)}h2{font-size:17px;margin:0 0 12px}h3{margin:0 0 12px;font-size:15px}
+.notice{background:#162d43;border-left:4px solid var(--yellow);padding:12px 14px;margin-bottom:18px;color:#dbe8f2}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+.card{background:#0b1c2e;border:1px solid var(--edge);border-radius:7px;padding:12px}
+.card strong{display:block;font-size:23px;color:#75dbef}.card span{font-size:12px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field label{font-weight:600;color:#d1e7f5;font-size:12px}
+.field input,.field select,.field textarea,#search{width:100%;border:1px solid #47708e;border-radius:5px;background:#071a2c;color:var(--txt);padding:10px;font:inherit}
+.field textarea{min-height:84px;resize:vertical}.wide{grid-column:span 2}.full{grid-column:1/-1}
+.small{font-size:12px;color:var(--muted)}.note{font-size:12px;color:#f5dc9c}
+button,.button{cursor:pointer;background:#086092;border:1px solid #4697c2;border-radius:5px;color:white;padding:10px 15px;font-weight:700;font:inherit;text-decoration:none}
+button:hover,.button:hover{background:#087eb3}.secondary{background:#203a54;border-color:#55758b}.danger{background:#783344;border-color:#d46a77}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:17px}
+.status{margin-top:13px;min-height:25px;color:#81dfbd}#error{color:#ffb1aa;white-space:pre-wrap}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}.toolbar input{flex:1;min-width:220px}.toolbar select{max-width:220px}
+.tablewrap{overflow:auto;border:1px solid var(--edge);border-radius:7px}
+table{width:100%;border-collapse:collapse;min-width:900px}th,td{padding:11px;border-bottom:1px solid #304e67;text-align:left;vertical-align:top}
+th{background:#1a3c57;font-size:12px;white-space:nowrap}td{background:#10283f;font-size:13px}
+td small{display:block;color:var(--muted)}td .row-actions{display:flex;gap:5px;flex-wrap:wrap}
+td button{font-size:12px;padding:6px 9px} .chip{display:inline-block;border:1px solid #3e90b1;padding:2px 7px;border-radius:20px;font-size:11px}
+.empty{padding:20px;text-align:center;color:var(--muted)}
+footer{padding:15px 22px;color:var(--muted);font-size:12px}
+@media(max-width:820px){.shell{margin:0;border-width:2px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.cards{grid-template-columns:repeat(3,minmax(0,1fr))}.wide{grid-column:1/-1}}
+@media(max-width:540px){section{padding:14px}.grid{grid-template-columns:1fr}.wide{grid-column:auto}.cards{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header><h1><b>ACOUSTIC</b>LAB / Banco de Dados</h1><div class="sub">Cadastro de gravações acústicas, rotulagem supervisionada e preparação de datasets</div></header>
+<nav aria-label="Módulos"><a href="index.html">▦ Análise sonar</a><a href="dados.html" class="active" aria-current="page">▤ Banco de dados e rotulagem</a></nav>
+<section>
+<div class="notice"><strong>Privacidade:</strong> os arquivos WAV e os rótulos ficam no armazenamento local deste navegador (IndexedDB). Não são enviados ao GitHub, nem compartilhados com outros computadores. Não utilize o navegador como único backup de dados importantes ou sigilosos.</div>
+<div class="cards">
+<div class="card"><strong id="total">0</strong><span>Gravações cadastradas</span></div>
+<div class="card"><strong id="classes">0</strong><span>Classes distintas</span></div>
+<div class="card"><strong id="size">0 MB</strong><span>Áudio armazenado</span></div>
+</div><div class="small" id="quota"></div>
+</section>
+<section id="cadastro"><h2 id="formTitle">Nova aquisição acústica</h2>
+<form id="recordForm">
+<div class="grid">
+<div class="field full"><label for="wav">Arquivo acústico WAV (obrigatório para novo cadastro)</label><input type="file" id="wav" accept=".wav,audio/wav,audio/x-wav"><div id="fileHint" class="small">Após selecionar um WAV, as características técnicas serão lidas do cabeçalho.</div></div>
+<div class="field"><label for="target">Nome / identificação do alvo *</label><input id="target" maxlength="150" placeholder="Ex.: Motor elétrico A / Fonte 001" required></div>
+<div class="field"><label for="targetClass">Classe do alvo *</label><input id="targetClass" list="classOptions" maxlength="100" placeholder="Ex.: Motor elétrico" required><datalist id="classOptions"><option value="Motor elétrico"><option value="Motor de combustão"><option value="Embarcação mercante"><option value="Embarcação de pesca"><option value="Embarcação de pesquisa"><option value="Ambiente / ruído de fundo"><option value="Desconhecido"></datalist></div>
+<div class="field"><label for="subclass">Subclasse / modelo</label><input id="subclass" maxlength="130" placeholder="Ex.: Fabricante / classe / modelo"></div>
+<div class="field"><label for="operating">Estado de operação</label><select id="operating"><option value="">Não informado</option><option>Desligado</option><option>Marcha lenta</option><option>Regime estacionário</option><option>Aceleração</option><option>Desaceleração</option><option>Manobra</option><option>Trânsito</option><option>Variável / não informado</option></select></div>
+<div class="field"><label for="propulsion">Tipo de propulsão / fonte</label><select id="propulsion"><option value="">Não informado</option><option>Elétrica</option><option>Diesel</option><option>Gasolina</option><option>Híbrida</option><option>Outra</option><option>Não aplicável</option></select></div>
+<div class="field"><label for="origin">Origem dos dados *</label><select id="origin" required><option value="">Selecionar</option><option>Wolfset</option><option>Campanha experimental própria</option><option>Banco público externo</option><option>Sinal sintético</option><option>Outra origem</option></select></div>
+<div class="field"><label for="acqDate">Data/hora da aquisição</label><input id="acqDate" type="datetime-local"></div>
+<div class="field"><label for="environment">Ambiente de aquisição</label><select id="environment"><option value="">Não informado</option><option>Tanque / laboratório</option><option>Mar / oceano</option><option>Rio / lago</option><option>Ambiente simulado</option><option>Outro</option></select></div>
+<div class="field"><label for="sensor">Sensor / hidrofone</label><input id="sensor" maxlength="130" placeholder="Ex.: modelo do hidrofone"></div>
+<div class="field"><label for="campaign">Campanha / experimento</label><input id="campaign" maxlength="150" placeholder="Ex.: campanha, sessão ou ID"></div>
+<div class="field"><label for="labelStatus">Qualidade da rotulagem</label><select id="labelStatus"><option>Provisória</option><option>Revisada</option><option>Validada</option></select></div>
+<div class="field"><label for="privacy">Classificação de acesso</label><select id="privacy"><option>Público</option><option>Uso interno</option><option>Restrito</option></select></div>
+<div class="field"><label for="tags">Etiquetas adicionais</label><input id="tags" maxlength="300" placeholder="Ex.: hélice, ruído, baixa rotação"></div>
+<div class="field full"><label for="notes">Observações e informações de aquisição</label><textarea id="notes" maxlength="4000" placeholder="Instrumentação, distância, condições ambientais, regime de aquisição, observações do operador. Não inclua informações sigilosas em ambientes não autorizados."></textarea></div>
+</div>
+<div class="actions"><button type="submit" id="save">Salvar gravação e rótulos</button><button type="button" class="secondary" id="clear">Limpar / novo cadastro</button></div>
+<div class="status" id="status" role="status" aria-live="polite"></div><div id="error" role="alert"></div>
+</form></section>
+<section><h2>Dataset rotulado</h2>
+<div class="toolbar">
+<input id="search" placeholder="Buscar por alvo, classe, nome do arquivo ou etiqueta" aria-label="Pesquisar registros">
+<select id="filterStatus" aria-label="Filtrar validação"><option value="">Todas as rotulagens</option><option>Provisória</option><option>Revisada</option><option>Validada</option></select>
+<button class="secondary" id="csv">Exportar metadados CSV</button><button class="secondary" id="json">Exportar metadados JSON</button>
+</div>
+<div class="tablewrap"><table><thead><tr><th>Alvo / classe</th><th>Arquivo</th><th>Aquisição</th><th>Rótulo</th><th>Ações</th></tr></thead><tbody id="records"></tbody></table><div id="empty" class="empty">Nenhum registro cadastrado neste navegador.</div></div>
+<div class="note" style="margin-top:12px">A exportação CSV/JSON inclui somente metadados e rótulos, não os arquivos de áudio. Baixe os WAV individualmente e mantenha backups separados.</div>
+</section>
+<footer>AcousticLab-Sonar · Armazenamento local IndexedDB · Rótulos inseridos pelo operador; não há classificação automática por IA nesta versão.</footer>
+</div>
+<script>
+"use strict";
+var DB_NAME="acousticlab-acoustic-datasets", STORE="recordings", VERSION=1;
+var $=function(id){return document.getElementById(id);};
+var dbPromise;
+var editingId=null;
+var cached=[];
+var fields=["target","targetClass","subclass","operating","propulsion","origin","acqDate","environment","sensor","campaign","labelStatus","privacy","tags","notes"];
+function openDB(){
+ if(!("indexedDB" in window))return Promise.reject(new Error("Este navegador não oferece IndexedDB."));
+ if(!dbPromise)dbPromise=new Promise(function(resolve,reject){
+  var r=indexedDB.open(DB_NAME,VERSION);
+  r.onupgradeneeded=function(){if(!r.result.objectStoreNames.contains(STORE)){var s=r.result.createObjectStore(STORE,{keyPath:"id"});s.createIndex("targetClass","targetClass",{unique:false});}};
+  r.onsuccess=function(){resolve(r.result);};r.onerror=function(){reject(r.error||new Error("Falha ao abrir banco local."));};
+ });
+ return dbPromise;
+}
+async function transaction(mode,fn){
+ var db=await openDB();
+ return new Promise(function(resolve,reject){
+  var tr=db.transaction(STORE,mode),store=tr.objectStore(STORE),request=fn(store),result;
+  request.onsuccess=function(){result=request.result;};
+  tr.oncomplete=function(){resolve(result);};
+  tr.onerror=function(){reject(tr.error||new Error("Operação local não concluída."));};
+  tr.onabort=function(){reject(tr.error||new Error("Operação cancelada."));};
+ });
+}
+function allRecords(){return transaction("readonly",function(s){return s.getAll();});}
+function getRecord(id){return transaction("readonly",function(s){return s.get(id);});}
+function saveRecord(x){return transaction("readwrite",function(s){return s.put(x);});}
+function deleteRecord(id){return transaction("readwrite",function(s){return s.delete(id);});}
+function setMessage(s,error){$("status").textContent=error?"":s;$("error").textContent=error?s:"";}
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+function dateString(s){if(!s)return "—";var v=new Date(s);return isNaN(v)?String(s):v.toLocaleString("pt-BR");}
+function prettySize(n){return (Number(n||0)/1048576).toLocaleString("pt-BR",{maximumFractionDigits:1})+" MB";}
+function safeFileName(s){return String(s).replace(/[\\/:*?"<>|]+/g,"_").slice(0,140);}
+function download(blob,name){
+ var a=document.createElement("a"),url=URL.createObjectURL(blob);a.href=url;a.download=safeFileName(name);document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url);},1500);
+}
+function csvValue(v){var s=String(v==null?"":v);if(/^[=+\-@]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"';}
+async function wavInfo(file){
+ if(!file)return null;
+ if(!/\.wav$/i.test(file.name))throw new Error("Selecione um arquivo WAV. Outros formatos ainda não são suportados pelo cadastro.");
+ var ab=await file.slice(0,Math.min(file.size,131072)).arrayBuffer(),v=new DataView(ab);
+ function ascii(i,n){var s="";for(var j=0;j<n;j++)s+=String.fromCharCode(v.getUint8(i+j));return s;}
+ if(v.byteLength<44||ascii(0,4)!=="RIFF"||ascii(8,4)!=="WAVE")throw new Error("O arquivo não contém um cabeçalho RIFF/WAVE válido (RF64 ainda não suportado).");
+ var p=12,fmt=null,bytes=null;
+ while(p+8<=v.byteLength){var name=ascii(p,4),len=v.getUint32(p+4,true);if(name==="fmt "&&len>=16&&p+24<=v.byteLength)fmt={codec:v.getUint16(p+8,true),channels:v.getUint16(p+10,true),sampleRate:v.getUint32(p+12,true),bits:v.getUint16(p+22,true),byteRate:v.getUint32(p+16,true)};
+ if(name==="data"){bytes=len;break;}
+ if(len>v.byteLength||p+8+len>v.byteLength)break;
+ p+=8+len+(len%2);
+ }
+ if(!fmt||!fmt.sampleRate||!fmt.channels)throw new Error("Não foi possível identificar a taxa de amostragem e os canais no WAV.");
+ if(fmt.codec!==1&&fmt.codec!==3&&fmt.codec!==65534)throw new Error("Codec WAV não suportado nesta versão. Utilize WAV PCM ou IEEE Float.");
+ var sec=bytes!=null&&bytes!==4294967295&&fmt.byteRate>0?bytes/fmt.byteRate:null;
+ return {sampleRate:fmt.sampleRate,channels:fmt.channels,bits:fmt.bits,codec:fmt.codec,duration:sec,bytes:file.size};
+}
+async function selectedWav(){
+ var f=$("wav").files[0];if(!f)return null;return wavInfo(f);
+}
+$("wav").addEventListener("change",async function(){
+ var f=$("wav").files[0];if(!f){$("fileHint").textContent="Selecione um arquivo WAV.";return;}
+ try{var info=await wavInfo(f);$("fileHint").textContent=f.name+" · "+info.sampleRate+" Hz · "+info.channels+" canal(is) · "+info.bits+" bits · "+(info.duration==null?"duração não determinada":info.duration.toFixed(2)+" s")+" · "+prettySize(info.bytes);setMessage("");}catch(e){$("fileHint").textContent=e.message;setMessage(e.message,true);}
+});
+function resetForm(){
+ editingId=null;$("recordForm").reset();$("formTitle").textContent="Nova aquisição acústica";$("save").textContent="Salvar gravação e rótulos";$("fileHint").textContent="Após selecionar um WAV, as características técnicas serão lidas do cabeçalho.";setMessage("");$("wav").required=false;
+}
+$("clear").addEventListener("click",resetForm);
+$("recordForm").addEventListener("submit",async function(e){
+ e.preventDefault();$("save").disabled=true;setMessage("Gravando dados neste navegador...");
+ try{
+  var old=editingId?await getRecord(editingId):null;
+  if(editingId&&!old)throw new Error("Registro não encontrado para atualização.");
+  var file=$("wav").files[0]||null;
+  if(!old&&!file)throw new Error("Escolha um arquivo WAV para cadastrar a gravação.");
+  if(!$("target").value.trim()||!$("targetClass").value.trim()||!$("origin").value)throw new Error("Nome do alvo, classe e origem são obrigatórios.");
+  var info=file?await wavInfo(file):old.audioInfo;
+  var obj=old?Object.assign({},old):{id:(crypto.randomUUID?crypto.randomUUID():String(Date.now())+"_"+Math.random().toString(36).slice(2)),createdAt:new Date().toISOString()};
+  fields.forEach(function(k){obj[k]=$(k).value.trim();});
+  obj.labelSource="manual";obj.labelVersion=(old?Number(old.labelVersion||0):0)+1;
+  obj.updatedAt=new Date().toISOString();obj.filename=file?file.name:old.filename;obj.audio=file||old.audio;obj.audioInfo=info;obj.bytes=info.bytes;
+  await saveRecord(obj);resetForm();setMessage("Gravação e rotulagem salvas localmente. ID: "+obj.id);await refresh();
+ }catch(e){setMessage((e&&e.message?e.message:String(e))+". Se o navegador estiver sem espaço, exporte seus dados e libere armazenamento.",true);}
+ finally{$("save").disabled=false;}
+});
+async function refresh(){
+ cached=await allRecords();cached.sort(function(a,b){return (b.createdAt||"").localeCompare(a.createdAt||"");});
+ $("total").textContent=cached.length;
+ $("classes").textContent=new Set(cached.map(function(x){return x.targetClass.trim().toLowerCase();}).filter(Boolean)).size;
+ $("size").textContent=prettySize(cached.reduce(function(a,x){return a+Number(x.bytes||0);},0));
+ if(navigator.storage&&navigator.storage.estimate){
+  try{var q=await navigator.storage.estimate();$("quota").textContent="Uso aproximado do armazenamento deste site: "+prettySize(q.usage||0)+" de "+prettySize(q.quota||0)+" disponíveis (estimativa do navegador).";}catch(e){}
+ }
+ renderRows();
+}
+function renderRows(){
+ var q=$("search").value.trim().toLowerCase(),status=$("filterStatus").value;
+ var filtered=cached.filter(function(x){
+  return (!status||x.labelStatus===status)&&(!q||[x.target,x.targetClass,x.subclass,x.filename,x.tags,x.campaign].join(" ").toLowerCase().includes(q));
+ });
+ var tbody=$("records");tbody.replaceChildren();$("empty").style.display=filtered.length?"none":"block";
+ filtered.forEach(function(x){
+  var tr=document.createElement("tr");tr.innerHTML=
+   '<td><b>'+esc(x.target)+'</b><small>'+esc(x.targetClass)+(x.subclass?" / "+esc(x.subclass):"")+'</small></td>'+
+   '<td>'+esc(x.filename)+'<small>'+esc(x.audioInfo.sampleRate)+' Hz • '+esc(x.audioInfo.channels)+' canal(is) • '+(x.audioInfo.duration==null?"—":x.audioInfo.duration.toFixed(1)+" s")+'</small></td>'+
+   '<td>'+esc(x.origin)+'<small>'+esc(x.acqDate||"Data não informada")+'</small></td>'+
+   '<td><span class="chip">'+esc(x.labelStatus)+'</span><small>Humano / v'+esc(x.labelVersion)+'</small></td>'+
+   '<td><div class="row-actions"><button data-a="analysis" data-id="'+esc(x.id)+'">Analisar</button><button class="secondary" data-a="edit" data-id="'+esc(x.id)+'">Editar</button><button class="secondary" data-a="wav" data-id="'+esc(x.id)+'">WAV</button><button class="danger" data-a="delete" data-id="'+esc(x.id)+'">Excluir</button></div></td>';
+  tbody.appendChild(tr);
+ });
+}
+$("search").addEventListener("input",renderRows);$("filterStatus").addEventListener("change",renderRows);
+$("records").addEventListener("click",async function(e){
+ var b=e.target.closest("button[data-a]");if(!b)return;
+ var id=b.dataset.id,action=b.dataset.a,x=cached.find(function(r){return r.id===id;});if(!x)return;
+ try{
+  if(action==="analysis"){location.href="index.html?audioId="+encodeURIComponent(id);return;}
+  if(action==="edit"){
+   editingId=id;fields.forEach(function(k){$(k).value=x[k]||"";});
+   $("wav").value="";$("fileHint").textContent="Áudio atual: "+x.filename+". Deixe o campo vazio para preservar o WAV armazenado.";
+   $("formTitle").textContent="Editar aquisição e rotulagem";$("save").textContent="Atualizar registro";
+   document.getElementById("cadastro").scrollIntoView({behavior:"smooth"});setMessage("Editando "+x.target+". O rótulo será versionado ao salvar.");return;
+  }
+  if(action==="wav"){download(x.audio,x.filename);return;}
+  if(action==="delete"&&confirm('Excluir definitivamente o arquivo "'+x.filename+'" e seus rótulos do banco local?')){
+   await deleteRecord(id);if(editingId===id)resetForm();setMessage("Registro excluído do navegador.");await refresh();
+  }
+ }catch(err){setMessage(err.message||String(err),true);}
+});
+var exportKeys=["id","target","targetClass","subclass","operating","propulsion","origin","acqDate","environment","sensor","campaign","labelStatus","labelSource","labelVersion","privacy","tags","notes","filename","sampleRate","channels","bits","duration","bytes","createdAt","updatedAt"];
+function metadata(x){var y={};exportKeys.forEach(function(k){y[k]=x.audioInfo&&k in x.audioInfo?x.audioInfo[k]:x[k]==null?"":x[k];});return y;}
+$("csv").addEventListener("click",function(){
+ if(!cached.length){setMessage("Não há registros para exportar.",true);return;}
+ var lines=[exportKeys.map(csvValue).join(";")].concat(cached.map(function(x){var m=metadata(x);return exportKeys.map(function(k){return csvValue(m[k]);}).join(";");}));
+ download(new Blob(["\ufeff"+lines.join("\r\n")],{type:"text/csv;charset=utf-8"}),"acousticlab_metadados.csv");setMessage("CSV exportado (somente metadados, sem WAV).");
+});
+$("json").addEventListener("click",function(){
+ if(!cached.length){setMessage("Não há registros para exportar.",true);return;}
+ download(new Blob([JSON.stringify({schema:"AcousticLab/local-dataset/v1",exportedAt:new Date().toISOString(),containsAudio:false,records:cached.map(metadata)},null,2)],{type:"application/json"}),"acousticlab_metadados.json");setMessage("JSON exportado (somente metadados, sem WAV).");
+});
+refresh().catch(function(e){setMessage("Não foi possível abrir o banco de dados local: "+e.message,true);});
+</script>
+</body></html>
